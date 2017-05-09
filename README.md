@@ -6,6 +6,17 @@
 
 ## Just Run the sample
 
+* Octaveパッケージのインストール
+** `strings` パッケージを入れます
+
+```
+# apt-get install liboctave-dev
+
+$ octave --no-gui
+>> pkg install -forge strings
+```
+
+
 TBD...
 
 ## Install
