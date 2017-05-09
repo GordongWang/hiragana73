@@ -2,9 +2,13 @@
 
 ひらがなの画像をOctaveで機械学習させたい
 
-## Install
-
 データセットは [文字画像データセット(平仮名73文字版)を試験公開しました](https://lab.ndl.go.jp/cms/hiragana73) から取得しています
+
+## Just Run the sample
+
+TBD...
+
+## Install
 
 * Dropboxに元のデータセットを用意しているのでダウンロードしてください
 
@@ -21,9 +25,17 @@ $ tar xvf hiragana73.tar.gz
 $ bash ./preprocess.sh
 ```
 
-これにより、画像データBASE64で符号化され、以下のようなCSVファイルになります
+これにより、画像データはBASE64で符号化され、以下のようなCSVファイルになります
 
 ```
 unicode,filename,base64
 U305E,1934_1235502_0067.png,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAIAAADYYG7QAAAABGdBTUEAALGPC...
+```
+
+手頃なサンプルデータがほしいので以下のようなコマンドを使ってsample.csvを作成しました
+
+* これにより、５０音の全てに対して10個サンプルデータがあります
+
+```
+$ cat dataset.csv | awk -F ',' {'print $1'} | uniq | sort | xargs -I{} sh -c "grep '{}' dataset.csv | head" > sample.csv
 ```
