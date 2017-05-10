@@ -7,7 +7,7 @@
 ## Just Run the sample
 
 * Octaveパッケージのインストール
-** `strings` パッケージを入れます
+    * `strings` パッケージを入れます
 
 ```
 # apt-get install liboctave-dev
