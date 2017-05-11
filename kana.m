@@ -7,12 +7,14 @@ pkg load strings;
 
 %% Initialization
 clear ; close all; clc
+page_screen_output(0);
+page_output_immediately(1);
 
 %% パラメーターを指定する
 input_layer_size  = 48^2; %% 48x48のサイズの画像
-hidden_layer_size = 802;  %% 隠れ層のサイズ、だいぶ適当
+hidden_layer_size = 200;  %% 隠れ層のサイズ、だいぶ適当
 kana_labels       = 73;   %% ひらがなは濁音、半濁音含めて73ある
-sample_size       = 30;   %% それぞれの標本数を30とる
+sample_size       = 10;   %% それぞれの標本数を30とる
 
 printf("========================================\n");
 printf("=== 入力層、隠れ層、出力層を設定する ===\n");
@@ -34,9 +36,13 @@ for i = 1:rows(kanas),
   for j = 1:sample_size,
     index = sample_size * (i-1) + j;
     vec   = imread(pngs{j})(:)';
+
     if (columns(vec) > input_layer_size)
       printf("index: %d, skipping...\n", index);
-      continue;
+      vec = imread(pngs{j+30})(:)';
+      if (columns(vec) > input_layer_size)
+	error("still large size image exists...\n");
+      endif
     else
       printf(".");
     endif
@@ -48,6 +54,7 @@ for i = 1:rows(kanas),
 endfor
 
 m = rows(X);
+
 
 printf("\n");
 printf("========================================\n");
@@ -73,7 +80,7 @@ printf("=== 目的関数を求め、勾配を求める         ===\n");
 printf("============================================\n");
 
 %% Octaveの機能でGradientを求める
-options = optimset('MaxIter', 50);
+options = optimset('MaxIter', 3);
 
 %% 正規化パラメーター
 %% これでオーバーフィッティングを防ぐ
@@ -86,7 +93,9 @@ costFunction = @(p) nnCostFunction(p, ...
                                    kana_labels, X, y, lambda);
 
 %% 最急降下法のアルゴリズムを使ってJ(θ)を最小化
-[nn_params, cost] = fminunc(costFunction, nn_params, options);
+[nn_params, cost] = fmincg(costFunction, nn_params, options);
+
+printf("Theta: %d Cost: %d \n", nn_params, cost);
 
 % Gray Image
 colormap(gray);
