@@ -12,8 +12,8 @@ page_output_immediately(1);
 
 %% パラメーターを指定する
 input_layer_size  = 48^2; %% 48x48のサイズの画像
-hidden_layer_size = 200;  %% 隠れ層のサイズ、だいぶ適当
-kana_labels       = 73;   %% ひらがなは濁音、半濁音含めて73ある
+hidden_layer_size = 25;   %% 隠れ層のサイズ、だいぶ適当
+kana_labels       = 10;   %% ひらがなは濁音、半濁音含めて73ある、収束しない場合は少なくする
 sample_size       = 10;   %% それぞれの標本数を30とる
 
 printf("========================================\n");
@@ -28,7 +28,7 @@ y = zeros(kana_labels * sample_size, 1);
 
 kanas = glob("./hiragana73/*/");
 
-for i = 1:rows(kanas),
+for i = 1:kana_labels,
   printf("\nPick up from %s %d files.\n ", kanas{i}, sample_size);
   pngs = glob([kanas{i} "*.png"]);
 
@@ -80,7 +80,7 @@ printf("=== 目的関数を求め、勾配を求める         ===\n");
 printf("============================================\n");
 
 %% Octaveの機能でGradientを求める
-options = optimset('MaxIter', 3);
+options = optimset('MaxIter', 50);
 
 %% 正規化パラメーター
 %% これでオーバーフィッティングを防ぐ
@@ -97,5 +97,16 @@ costFunction = @(p) nnCostFunction(p, ...
 
 printf("Theta: %d Cost: %d \n", nn_params, cost);
 
-% Gray Image
-colormap(gray);
+%% ニューラルネットワークの重みを取り出す
+Theta1 = reshape(nn_params(1:hidden_layer_size * (input_layer_size + 1)), ...
+                 hidden_layer_size, (input_layer_size + 1));
+
+Theta2 = reshape(nn_params((1 + (hidden_layer_size * (input_layer_size + 1))):end), ...
+                 kana_labels, (hidden_layer_size + 1));
+
+%% 実際の画像を与えてみる
+pred = predict(Theta1, Theta2, X);
+
+%% 正答率を出す
+%% 10種類仮名を与えて正答率10%の場合ほぼまったく合っていないことになる
+fprintf('\nTraining Set Accuracy: %f\n', mean(double(pred == y)) * 100);
