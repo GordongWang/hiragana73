@@ -22,11 +22,14 @@ printf("Hidden Layer size %d \n", hidden_layer_size);
 printf("Output Layer size %d \n", kana_labels);
 
 X = zeros(kana_labels * sample_size, input_layer_size);
+y = zeros(kana_labels * sample_size, 1);
+
 kanas = glob("./hiragana73/*/");
 
 for i = 1:rows(kanas),
   printf("\nPick up from %s %d files.\n ", kanas{i}, sample_size);
   pngs = glob([kanas{i} "*.png"]);
+
 
   for j = 1:sample_size,
     index = sample_size * (i-1) + j;
@@ -38,7 +41,9 @@ for i = 1:rows(kanas),
       printf(".");
     endif
     %%printf("index: %d, vector row: %d, col: %d\n", index, rows(vec), columns(vec));
-    X(index, :) = vec;
+
+    X(index, :) = vec; %% データセットをベクタで与える
+    y(index)	= i;   %% 教師あり学習の答えを設定しておく
   endfor
 endfor
 
@@ -63,6 +68,25 @@ printf("Theta2 rows: %d, columns: %d\n", rows(Theta2), columns(Theta2));
 
 nn_params = [Theta1(:) ; Theta2(:)];
 
+printf("============================================\n");
+printf("=== 目的関数を求め、勾配を求める         ===\n");
+printf("============================================\n");
+
+%% Octaveの機能でGradientを求める
+options = optimset('MaxIter', 50);
+
+%% 正規化パラメーター
+%% これでオーバーフィッティングを防ぐ
+lambda = 1;
+
+%% 目的関数を作る関数を設定
+costFunction = @(p) nnCostFunction(p, ...
+                                   input_layer_size, ...
+                                   hidden_layer_size, ...
+                                   kana_labels, X, y, lambda);
+
+%% 最急降下法のアルゴリズムを使ってJ(θ)を最小化
+[nn_params, cost] = fminunc(costFunction, nn_params, options);
+
 % Gray Image
 colormap(gray);
-imshow(X);
