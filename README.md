@@ -7,13 +7,14 @@
 ## Just Run the sample
 
 * Octaveパッケージのインストール
-    * `strings` パッケージを入れます
+    * `strings`, `image` パッケージを入れます
 
 ```
 # apt-get install liboctave-dev
 
 $ octave --no-gui
 >> pkg install -forge strings
+>> pkg install -forge image
 ```
 
 

@@ -4,6 +4,7 @@
 
 %% load package
 pkg load strings;
+pkg load image;
 
 %% Initialization
 clear ; close all; clc
@@ -12,9 +13,9 @@ page_output_immediately(1);
 
 %% パラメーターを指定する
 input_layer_size  = 48^2; %% 48x48のサイズの画像
-hidden_layer_size = 25;   %% 隠れ層のサイズ、だいぶ適当
+hidden_layer_size = 60;   %% 隠れ層のサイズ、だいぶ適当
 kana_labels       = 10;   %% ひらがなは濁音、半濁音含めて73ある、収束しない場合は少なくする
-sample_size       = 10;   %% それぞれの標本数を30とる
+sample_size       = 100;   %% それぞれの標本数を30とる
 
 printf("========================================\n");
 printf("=== 入力層、隠れ層、出力層を設定する ===\n");
@@ -25,7 +26,6 @@ printf("Output Layer size %d \n", kana_labels);
 
 X = zeros(kana_labels * sample_size, input_layer_size);
 y = zeros(kana_labels * sample_size, 1);
-
 
 kanas = glob("./hiragana73/*/");
 
@@ -39,7 +39,7 @@ for i = 1:kana_labels,
 
     if (columns(vec) > input_layer_size)
       printf("index: %d, skipping...\n", index);
-      vec = rgb2gray(imread(pngs{j+30}))(:)';
+      vec = imread(pngs{j+30})(:)';
       if (columns(vec) > input_layer_size)
 	error("still large size image exists...\n");
       endif
@@ -80,7 +80,7 @@ printf("=== 目的関数を求め、勾配を求める         ===\n");
 printf("============================================\n");
 
 %% Octaveの機能でGradientを求める
-it = 30;
+it = 200;
 options = optimset('MaxIter', it);
 
 %% 正規化パラメーター
@@ -114,7 +114,9 @@ Theta2 = reshape(nn_params((1 + (hidden_layer_size * (input_layer_size + 1))):en
 pred = predict(Theta1, Theta2, X);
 
 printf("\n*** pred vs answer ***\n");
-[pred y]
+for i = 1:rows(pred),
+  printf("予測 %d, 正解 %d\n", pred(i), y(i));
+endfor
 
 %% 正答率を出す
 %% 10種類仮名を与えて正答率10%の場合ほぼまったく合っていないことになる
