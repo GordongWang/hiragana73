@@ -69,5 +69,5 @@ function [J grad] = nnCostFunction(nn_params, ...
   Theta2_grad = D2 / m + lambda * Theta2;
 
   grad = [Theta1_grad(:) ; Theta2_grad(:)];
-  printf("J = %d\t, grad = %d \n", J, grad);
+  %% printf("J = %d\t, grad = %d \n", J, grad);
 end

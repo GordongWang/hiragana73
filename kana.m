@@ -26,12 +26,12 @@ printf("Output Layer size %d \n", kana_labels);
 X = zeros(kana_labels * sample_size, input_layer_size);
 y = zeros(kana_labels * sample_size, 1);
 
+
 kanas = glob("./hiragana73/*/");
 
 for i = 1:kana_labels,
   printf("\nPick up from %s %d files.\n ", kanas{i}, sample_size);
   pngs = glob([kanas{i} "*.png"]);
-
 
   for j = 1:sample_size,
     index = sample_size * (i-1) + j;
@@ -39,7 +39,7 @@ for i = 1:kana_labels,
 
     if (columns(vec) > input_layer_size)
       printf("index: %d, skipping...\n", index);
-      vec = imread(pngs{j+30})(:)';
+      vec = rgb2gray(imread(pngs{j+30}))(:)';
       if (columns(vec) > input_layer_size)
 	error("still large size image exists...\n");
       endif
@@ -80,11 +80,14 @@ printf("=== 目的関数を求め、勾配を求める         ===\n");
 printf("============================================\n");
 
 %% Octaveの機能でGradientを求める
-options = optimset('MaxIter', 50);
+it = 30;
+options = optimset('MaxIter', it);
 
 %% 正規化パラメーター
 %% これでオーバーフィッティングを防ぐ
-lambda = 1;
+lambda = 0.01;
+
+printf("\n繰り返し回数: %d, 正規化パラメーター: %d\n", it, lambda);
 
 %% 目的関数を作る関数を設定
 costFunction = @(p) nnCostFunction(p, ...
@@ -93,9 +96,12 @@ costFunction = @(p) nnCostFunction(p, ...
                                    kana_labels, X, y, lambda);
 
 %% 最急降下法のアルゴリズムを使ってJ(θ)を最小化
+printf("=============================================================\n");
+printf("=== 最急降下法のアルゴリズムを使ってJ(θ)を最小化         ===\n");
+printf("=============================================================\n");
 [nn_params, cost] = fmincg(costFunction, nn_params, options);
 
-printf("Theta: %d Cost: %d \n", nn_params, cost);
+%% printf("Theta: %d Cost: %d \n", nn_params, cost);
 
 %% ニューラルネットワークの重みを取り出す
 Theta1 = reshape(nn_params(1:hidden_layer_size * (input_layer_size + 1)), ...
@@ -107,6 +113,9 @@ Theta2 = reshape(nn_params((1 + (hidden_layer_size * (input_layer_size + 1))):en
 %% 実際の画像を与えてみる
 pred = predict(Theta1, Theta2, X);
 
+printf("\n*** pred vs answer ***\n");
+[pred y]
+
 %% 正答率を出す
 %% 10種類仮名を与えて正答率10%の場合ほぼまったく合っていないことになる
-fprintf('\nTraining Set Accuracy: %f\n', mean(double(pred == y)) * 100);
+fprintf('\n正解率: %f ％\n', mean(double(pred == y)) * 100);
