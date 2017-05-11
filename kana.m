@@ -15,7 +15,7 @@ page_output_immediately(1);
 input_layer_size  = 48^2; %% 48x48のサイズの画像
 hidden_layer_size = 60;   %% 隠れ層のサイズ、だいぶ適当
 kana_labels       = 10;   %% ひらがなは濁音、半濁音含めて73ある、収束しない場合は少なくする
-sample_size       = 100;   %% それぞれの標本数を30とる
+sample_size       = 100;  %% それぞれの標本数を30とる
 
 printf("========================================\n");
 printf("=== 入力層、隠れ層、出力層を設定する ===\n");
@@ -39,7 +39,7 @@ for i = 1:kana_labels,
 
     if (columns(vec) > input_layer_size)
       printf("index: %d, skipping...\n", index);
-      vec = imread(pngs{j+30})(:)';
+      vec = imread(pngs{j+3+floor(rand*10)})(:)';
       if (columns(vec) > input_layer_size)
 	error("still large size image exists...\n");
       endif

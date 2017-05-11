@@ -6,48 +6,35 @@
 
 ## Just Run the sample
 
-* Octaveパッケージのインストール
-    * `strings`, `image` パッケージを入れます
+* 今のところ、Debian Linuxでしかテストしてません
+    * Windowsでも動く気はしますが、それなりにスペックが必要そう
 
 ```
-# apt-get install liboctave-dev
-
-$ octave --no-gui
->> pkg install -forge strings
->> pkg install -forge image
-```
-
-
-TBD...
-
-## Install
-
-* Dropboxに元のデータセットを用意しているのでダウンロードしてください
-
-```
+$ git clone https://github.com/Hiroyuki-Nagata/hiragana73.git
+$ cd hiragana73
 $ wget https://www.dropbox.com/s/jwt301cls9024l8/hiragana73.tar.gz?dl=0 -O hiragana73.tar.gz
 $ tar xvf hiragana73.tar.gz
 ```
 
-* CSVファイル作成
-
-他の環境で使いやすいようにCSVファイルを作ります、８万枚データがあるので終わるまで気長に待ってください
+* ニューラルネットワークの起動
 
 ```
-$ bash ./preprocess.sh
+$ octave --no-gui
+>> kana
 ```
 
-これにより、画像データはBASE64で符号化され、以下のようなCSVファイルになります
+## メモ
+
+* 判別対象のターゲットの数は `kana_labels` で指定出来るようにしている
+    * `kana_labels = 10` だと `あ,い,う,え,お,か,が,き,ぎ,く` までの画像を判別するように機械学習する
+
+今のところ、下記のパラメーターだと家庭用のパソコン（クロック数3.8GHz）でもうまく動いた
 
 ```
-unicode,filename,base64
-U305E,1934_1235502_0067.png,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAIAAADYYG7QAAAABGdBTUEAALGPC...
+input_layer_size  = 48^2; %% 48x48のサイズの画像
+hidden_layer_size = 60;   %% 隠れ層のサイズ、だいぶ適当
+kana_labels       = 10;   %% ひらがなは濁音、半濁音含めて73ある、収束しない場合は少なくする
+sample_size       = 100;  %% それぞれの標本数を100とる
 ```
 
-手頃なサンプルデータがほしいので以下のようなコマンドを使ってsample.csvを作成しました
-
-* これにより、５０音の全てに対して10個サンプルデータがあります
-
-```
-$ cat dataset.csv | awk -F ',' {'print $1'} | uniq | sort | xargs -I{} sh -c "grep '{}' dataset.csv | head" > sample.csv
-```
+判別対象とネットワークの階層をもっと増やしたいがPCのスペックが足りない。やっぱりGPUが必要だ！
