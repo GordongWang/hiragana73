@@ -1,22 +1,22 @@
 # hiragana73
 
-ひらがなの画像をOctaveで機械学習させたい
+ひらがなの画像を Octave/Julia で機械学習させたい
 
 データセットは [文字画像データセット(平仮名73文字版)を試験公開しました](https://lab.ndl.go.jp/cms/hiragana73) から取得しています
 
-## Just Run the sample
+## Just Run the sample (Octave)
 
 * 今のところ、Debian Linuxでしかテストしてません
     * Windowsでも動く気はしますが、それなりにスペックが必要そう
 
 ```
 $ git clone https://github.com/Hiroyuki-Nagata/hiragana73.git
-$ cd hiragana73
+$ cd hiragana73/octave/
 $ wget https://www.dropbox.com/s/jwt301cls9024l8/hiragana73.tar.gz?dl=0 -O hiragana73.tar.gz
 $ tar xvf hiragana73.tar.gz
 ```
 
-* ニューラルネットワークの起動
+* ニューラルネットワークの起動 (Octave)
 
 ```
 $ octave --no-gui
