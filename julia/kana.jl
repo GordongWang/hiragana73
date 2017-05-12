@@ -13,6 +13,7 @@ using Images
 using Glob
 
 include("sigmoidGradient.jl");
+include("randInitializeWeights.jl")
 
 function main()
 
@@ -57,10 +58,17 @@ function main()
     m = size(X,1)
 
     println("========================================");
-    println("=== データセットの数を表示              ===");
+    println("=== データセットの数を表示           ===");
     println("========================================");
     @printf("Dataset size m = %d \n", m);
 
+    println("============================================")
+    println("=== ニューラルネットワークの重みを初期化 ===")
+    println("============================================")
+    @printf("\nInitializing Neural Network Parameters ...\n")
+
+    Theta1 = randInitializeWeights(input_layer_size, hidden_layer_size);
+    Theta2 = randInitializeWeights(hidden_layer_size, kana_labels);
 end
 
 main()
