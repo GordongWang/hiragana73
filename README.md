@@ -4,7 +4,9 @@
 
 データセットは [文字画像データセット(平仮名73文字版)を試験公開しました](https://lab.ndl.go.jp/cms/hiragana73) から取得しています
 
-## Just Run the sample (Octave)
+## Just Run the sample
+
+### Octave
 
 * 今のところ、Debian Linuxでしかテストしてません
     * Windowsでも動く気はしますが、それなりにスペックが必要そう
@@ -21,6 +23,27 @@ $ tar xvf hiragana73.tar.gz
 ```
 $ octave --no-gui
 >> kana
+```
+
+### Julia
+
+* 今のところ、Windowsでしかテストしてません
+
+```
+$ git clone https://github.com/Hiroyuki-Nagata/hiragana73.git
+$ cd hiragana73/julia/
+$ wget https://www.dropbox.com/s/jwt301cls9024l8/hiragana73.tar.gz?dl=0 -O hiragana73.tar.gz
+$ tar xvf hiragana73.tar.gz
+```
+
+* ニューラルネットワークの起動 (Julia)
+    * JuliaのREPLを起動する
+
+```
+$ julia
+julia> Pkg.add("Glob")
+
+julia> include("kana.jl")
 ```
 
 ## メモ
