@@ -42,6 +42,8 @@ $ tar xvf hiragana73.tar.gz
 ```
 $ julia
 julia> Pkg.add("Glob")
+julia> Pkg.add("Images")
+julia> Pkg.add("ImageMagick")
 
 julia> include("kana.jl")
 ```

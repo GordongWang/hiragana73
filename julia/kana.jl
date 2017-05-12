@@ -3,7 +3,10 @@
 #
 
 # load packages
+using FileIO
+using Images
 using Glob
+
 include("sigmoidGradient.jl");
 
 function main()
@@ -29,12 +32,25 @@ function main()
     kanas = glob("./hiragana73/*/")
     for i = 1:kana_labels
         @printf("\nPick up from %s %d files.\n ", kanas[i], sample_size)
-        pngs = glob(string(kanas[i], "*.png"))
+        pngs = glob("*.png", kanas[i])
 
         for j = 1:sample_size
+            index = sample_size * (i-1) + j
+            v     = (load(pngs[j])[:])'
             @printf(".")
+
+            X(index, :) = v
+            y(index)    = i
         end
     end
+
+    m = size(X)
+
+    println("========================================");
+    println("=== データセットの数を表示              ===");
+    println("========================================");
+    @printf("Dataset size m = %d \n", m);
+
 end
 
 main()
