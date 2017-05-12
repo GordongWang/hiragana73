@@ -1,7 +1,9 @@
-function nnCostFunction(nn_params, ...
-                        input_layer_size, ...
-                        hidden_layer_size, ...
-                        data_with_labels, ...
+include("sigmoidGradient.jl")
+
+function nnCostFunction(nn_params,
+                        input_layer_size,
+                        hidden_layer_size,
+                        data_with_labels,
                         X, y, lambda)
     # NNCOSTFUNCTION Implements the neural network cost function for a two layer
     # neural network which performs classification
@@ -16,11 +18,8 @@ function nnCostFunction(nn_params, ...
 
     # Reshape nn_params back into the parameters Theta1 and Theta2, the weight matrices
     # for our 2 layer neural network
-    Theta1 = reshape(nn_params(1:hidden_layer_size * (input_layer_size + 1)), ...
-                     hidden_layer_size, (input_layer_size + 1))
-
-    Theta2 = reshape(nn_params((1 + (hidden_layer_size * (input_layer_size + 1))):end), ...
-                     data_with_labels, (hidden_layer_size + 1))
+    Theta1 = reshape(nn_params(1:hidden_layer_size * (input_layer_size + 1)), hidden_layer_size, (input_layer_size + 1))
+    Theta2 = reshape(nn_params((1 + (hidden_layer_size * (input_layer_size + 1))):length(nn_params)),data_with_labels, (hidden_layer_size + 1))
 
     m = size(X, 1)
 
@@ -34,7 +33,7 @@ function nnCostFunction(nn_params, ...
     D2 = zeros(rows(Theta2), columns(Theta2))
 
     # Backpropagation Updates
-    for t = 1:m,
+    for t = 1:m
         # 1, 入力層 a1 にデータセットを入れる
         act1 = [ones(1,1); X(t,:)']
         z2   = Theta1 * act1
@@ -48,7 +47,7 @@ function nnCostFunction(nn_params, ...
         # 3, δ2を計算
         delta_3 = act3 - y_alt(:, y(t))
         delta_2 = (Theta2' * delta_3) .* sigmoidGradient([1; z2])
-        delta_2 = delta_2(2:end, :)
+        delta_2 = delta_2(2:length(rows(deleta_2)), :)
 
         # 4
         # D1 = D1 + d2 * a1'
@@ -59,8 +58,8 @@ function nnCostFunction(nn_params, ...
     # 目的関数の収束
     J = J / m
 
-    p1 = Theta1(:, 2:end).^2
-    p2 = Theta2(:, 2:end).^2
+    p1 = Theta1(:, 2:length(columns(Theta1))).^2
+    p2 = Theta2(:, 2:length(columns(Theta2))).^2
     r = sum(sum(p1)) + sum(sum(p2))
     r = r / (2 * m)
     J = J + lambda * r
@@ -73,5 +72,5 @@ function nnCostFunction(nn_params, ...
 
     # multiple values can be returned from a function using tuples
     # if the return keyword is omitted, the last term is returned
-    J, grad
+    return J, grad
 end
