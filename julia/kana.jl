@@ -3,6 +3,11 @@
 #
 
 # load packages
+# Pkg.add("Glob")
+# Pkg.add("Images")
+# Pkg.add("ImageMagick")
+# Pkg.add("FileIO")
+
 using FileIO
 using Images
 using Glob
@@ -17,7 +22,7 @@ function main()
     input_layer_size  = 48^2 # Images 48x48 pixel
     hidden_layer_size = 60   # Hidden layer size, I don't have any intension
     kana_labels       = 10   # 'Kana' has 73 characters, you need to reduce labels up to machine spec
-    sample_size       = 100  # Take 30 samples for each characters
+    sample_size       = 15   # Take 30 samples for each characters
 
     println("========================================\n")
     println("=== 入力層、隠れ層、出力層を設定する     ===\n")
@@ -37,14 +42,19 @@ function main()
         for j = 1:sample_size
             index = sample_size * (i-1) + j
             v     = (load(pngs[j])[:])'
+
+            if (size(v,2) > input_layer_size)
+                @printf("index: %d, skipping...\n", index);
+            else
+            end
             @printf(".")
 
-            X(index, :) = v
-            y(index)    = i
+            X[index, :] = v
+            y[index]    = i
         end
     end
 
-    m = size(X)
+    m = size(X,1)
 
     println("========================================");
     println("=== データセットの数を表示              ===");
