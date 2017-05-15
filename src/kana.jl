@@ -16,6 +16,7 @@ using Colors
 
 include("sigmoidGradient.jl");
 include("randInitializeWeights.jl")
+include("fmincg.jl")
 
 function main()
 
@@ -81,9 +82,9 @@ function main()
     println("=== 目的関数を求め、勾配を求める         ===")
     println("============================================")
 
-    # Octaveの機能でGradientを求める
+    # Gradientを求める(OptimsetはただのHashMapに変更)
     it = 200
-    #options = optimset('MaxIter', it)
+    options = Dict([("MaxIter", it)])
 
     # 正規化パラメーター
     # これでオーバーフィッティングを防ぐ
@@ -101,7 +102,8 @@ function main()
     println("=============================================================")
     println("=== 最急降下法のアルゴリズムを使ってJ(θ)を最小化         ===")
     println("=============================================================")
-    #[nn_params, cost] = fmincg(costFunction, nn_params, options)
+
+    nn_params, cost = fmincg(costFunction, nn_params, options)
 end
 
 main()

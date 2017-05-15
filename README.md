@@ -31,7 +31,7 @@ $ octave --no-gui
 
 ```
 $ git clone https://github.com/Hiroyuki-Nagata/hiragana73.git
-$ cd hiragana73/julia/
+$ cd hiragana73/src/
 $ wget https://www.dropbox.com/s/jwt301cls9024l8/hiragana73.tar.gz?dl=0 -O hiragana73.tar.gz
 $ tar xvf hiragana73.tar.gz
 ```
