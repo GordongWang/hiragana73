@@ -1,4 +1,4 @@
-# hiragana73
+# hiragana73 [![Build Status](https://travis-ci.org/Hiroyuki-Nagata/hiragana73.svg?branch=master)](https://travis-ci.org/Hiroyuki-Nagata/hiragana73)
 
 ひらがなの画像を Octave/Julia で機械学習させたい
 
