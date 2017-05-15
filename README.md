@@ -27,29 +27,35 @@ $ octave --no-gui
 
 ### Julia
 
-* Windows10, Debian GNU/Linuxでテストしています
+Windows10, Debian GNU/Linuxでテストしています
+
+* ニューラルネットワークの起動 (Julia)
+    * `Pkg.clone` で依存関係を解決できます
 
 ```
-$ git clone https://github.com/Hiroyuki-Nagata/hiragana73.git
-$ cd hiragana73/src/
+$ julia -e 'Pkg.clone("git@github.com:Hiroyuki-Nagata/hiragana73.git")'
+```
+
+* `Pkg.dir("***")` でインストール場所を調べられます
+
+```
+$ julia
+julia> Pkg.dir("hiragana73")
+"~/.julia/v0.4/hiragana73"
+```
+
+* 移動してデータセットをダウンロード
+
+```
+$ cd ~/.julia/v0.4/hiragana73/src
 $ wget https://www.dropbox.com/s/jwt301cls9024l8/hiragana73.tar.gz?dl=0 -O hiragana73.tar.gz
 $ tar xvf hiragana73.tar.gz
 ```
 
-* ニューラルネットワークの起動 (Julia)
-    * JuliaのREPLを起動してそれぞれのライブラリを入れる
-	* `Pkg.add()` してうまくいかないときは、一度コンソールを抜けてやり直す
+* `include("kana.jl")` で起動
 
 ```
-$ julia
-julia> Pkg.update()
-
-julia> Pkg.add("FileIO")
-julia> Pkg.add("Glob")
-julia> Pkg.add("Color")
-julia> Pkg.add("Images")
-julia> Pkg.add("ImageMagick")
-
+julia> cd("~/.julia/v0.4/hiragana73/src")
 julia> include("kana.jl")
 ```
 
