@@ -37,15 +37,20 @@ function main()
         for j = 1:sample_size
             index = sample_size * (i-1) + j
             v     = (load(pngs[j])[:])'
-            @printf(".")
 
-            X(index, :) = v
-            y(index)    = i
+            #@printf( "typeof(X[index,:]) = %s , typeof(v) = %s \n", typeof(X[index,:]), typeof(v))
+            #@printf( "typeof(y[index]) = %s , typeof(v) = %s \n", typeof(y[index]), typeof(i))
+
+            # to deal with RGB using images, convert it to Gray scaled image
+            X[index,:] = convert(Image{Gray}, v)
+            y[index]   = i
+            @printf(".")
         end
     end
 
-    m = size(X)
+    m = size(X,1)
 
+    @printf("\n")
     println("========================================");
     println("=== データセットの数を表示              ===");
     println("========================================");
