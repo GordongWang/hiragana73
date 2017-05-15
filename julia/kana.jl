@@ -4,13 +4,15 @@
 
 # load packages
 # Pkg.add("Glob")
+# Pkg.add("Color")
 # Pkg.add("Images")
 # Pkg.add("ImageMagick")
 # Pkg.add("FileIO")
 
 using FileIO
-using Images
 using Glob
+using Images
+using Colors
 
 include("sigmoidGradient.jl");
 include("randInitializeWeights.jl")
@@ -23,7 +25,7 @@ function main()
     input_layer_size  = 48^2 # Images 48x48 pixel
     hidden_layer_size = 60   # Hidden layer size, I don't have any intension
     kana_labels       = 10   # 'Kana' has 73 characters, you need to reduce labels up to machine spec
-    sample_size       = 15   # Take 30 samples for each characters
+    sample_size       = 30   # Take 30 samples for each characters
 
     println("========================================\n")
     println("=== 入力層、隠れ層、出力層を設定する     ===\n")

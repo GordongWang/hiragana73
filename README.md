@@ -27,7 +27,7 @@ $ octave --no-gui
 
 ### Julia
 
-* 今のところ、Windowsでしかテストしてません
+* Windows10, Debian GNU/Linuxでテストしています
 
 ```
 $ git clone https://github.com/Hiroyuki-Nagata/hiragana73.git
@@ -37,11 +37,16 @@ $ tar xvf hiragana73.tar.gz
 ```
 
 * ニューラルネットワークの起動 (Julia)
-    * JuliaのREPLを起動する
+    * JuliaのREPLを起動してそれぞれのライブラリを入れる
+	* `Pkg.add()` してうまくいかないときは、一度コンソールを抜けてやり直す
 
 ```
 $ julia
+julia> Pkg.update()
+
+julia> Pkg.add("FileIO")
 julia> Pkg.add("Glob")
+julia> Pkg.add("Color")
 julia> Pkg.add("Images")
 julia> Pkg.add("ImageMagick")
 
