@@ -16,6 +16,7 @@ using Colors
 
 include("sigmoidGradient.jl");
 include("randInitializeWeights.jl")
+include("nnCostFunction.jl")
 include("fmincg.jl")
 
 function main()
