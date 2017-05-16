@@ -48,14 +48,15 @@ function nnCostFunction(nn_params,
     for t = 1:m
         # 1, 入力層 a1 にデータセットを入れる
         #@printf("Datasets: Rows: %d, Cols: %d \n", size(X[t,:],1), size(X[t,:],2))
-
-        act1 = [ones(1,1); X[t,:]]
+        act1 = [ones(1,1); X[t,:]']
         z2   = Theta1 * act1
         act2 = [ones(1,1); sigmoid(z2)]
         z3   = Theta2 * act2
-        # see: http://stackoverflow.com/questions/29159386/how-should-i-convert-a-singleton-array-to-a-scalar
+        # see1: http://stackoverflow.com/questions/29159386/how-should-i-convert-a-singleton-array-to-a-scalar
         # Converting a singleton matrix as a scalar
-        act3 = reshape([sigmoid(z3)], 1)[1]
+        # see2: https://github.com/JuliaLang/julia/pull/11369
+        # Converting a singleton matrix as a scalar with using collect()
+        act3 = collect(sigmoid(z3))
 
         #@printf("Act1: Rows: %d, Cols: %d \n", size(act1,1), size(act1,2))
         #@printf("Act2: Rows: %d, Cols: %d \n", size(act2,1), size(act2,2))

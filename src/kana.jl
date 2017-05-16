@@ -46,13 +46,15 @@ function main()
 
         for j = 1:sample_size
             index = sample_size * (i-1) + j
-            v     = (load(pngs[j])[:])'
+            v     = load(pngs[j])
+            v     = convert(Image{Gray}, v)
 
             #@printf( "typeof(X[index,:]) = %s , typeof(v) = %s \n", typeof(X[index,:]), typeof(v))
             #@printf( "typeof(y[index]) = %s , typeof(v) = %s \n", typeof(y[index]), typeof(i))
 
-            # to deal with RGB using images, convert it to Gray scaled image
-            X[index,:] = convert(Image{Gray}, v)
+            # To deal with RGB using images, convert it to Gray scaled image
+            # Create dataset as transposed X
+            X[index,:] = v[:]
             y[index]   = i
             @printf(".")
         end
