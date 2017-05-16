@@ -33,7 +33,7 @@ Windows10, Debian GNU/Linuxでテストしています
     * `Pkg.clone` で依存関係を解決できます
 
 ```
-$ julia -e 'Pkg.clone("git@github.com:Hiroyuki-Nagata/hiragana73.git")'
+$ julia -e 'Pkg.clone("https://github.com/Hiroyuki-Nagata/hiragana73.git")'
 ```
 
 * `Pkg.dir("***")` でインストール場所を調べられます
