@@ -79,13 +79,33 @@ function fmincg(f, X, options)
     f1,df1 = eval(f)(X)                           # get function value and gradient
     i = i + (length<0)                                             # count epochs?!
     s = -df1                                         # search direction is steepest
-    d1 = -s'*s                                                  # this is the slope
-    z1 = red/(1-d1)                                   # initial step is red/(|s|+1)
 
+    d1 = (-s'*s)                                                # this is the slope
 
-    #
-    # TODO: Implement double while loop
-    #
+    #@printf("d1[1] %s = %f \n", typeof(d1[1]), d1[1])
+    #@printf("d1[2] %s = %d \n", typeof(d1[2]), d1[2])
+    #@printf("red = %d, d1 = %f\n", red, d1[1])
+
+    z1 = red / (1.0 - d1[1])                          # initial step is red/(|s|+1)
+    #@printf("z1 = %f \n", z1)
+
+    while i < abs(length)
+        i = i + (length > 0)                                   # count iterations?!
+
+        X0, f0, df0 = X, f1, df1                    # make a copy of current values
+        X = X + z1*s                                            # begin line search
+        f2, df2 = eval(f)(X)
+        df2 = df2[1]
+        i = i + (length<0)                                         # count epochs?!
+        d2 = df2' * s
+        f3, d3, z3 = f1, d1, -z1              # initialize point 3 equal to point 1
+        if length > 0
+            M = MAX
+        else
+            M = min(MAX, -length-i)
+        end
+        success, limit = 0, -1                              # initialize quanteties
+    end
 
     return X, fX, i
 end
