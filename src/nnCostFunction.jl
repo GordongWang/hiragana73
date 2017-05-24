@@ -99,6 +99,11 @@ function nnCostFunction(nn_params,
 
     grad = [Theta1_grad[:] ; Theta2_grad[:]]
 
+    #
+    # To return "Array{Float64,1}" as scalar...
+    # https://stackoverflow.com/questions/29159386/how-should-i-convert-a-singleton-array-to-a-scalar
+    #
+    J = reshape(J, 1)[1]
     # multiple values can be returned from a function using tuples
     # if the return keyword is omitted, the last term is returned
     return J, grad

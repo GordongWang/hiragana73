@@ -57,12 +57,12 @@ function fmincg(f, X, options)
         length = 100
     end
 
-    RHO = 0.01                             # a bunch of constants for line searches
-    SIG = 0.5        # RHO and SIG are the constants in the Wolfe-Powell conditions
-    INT = 0.1     # don't reevaluate within 0.1 of the limit of the current bracket
-    EXT = 3.0                     # extrapolate maximum 3 times the current bracket
-    MAX = 20                          # max 20 function evaluations per line search
-    RATIO = 100                                       # maximum allowed slope ratio
+    const RHO = 0.01                             # a bunch of constants for line searches
+    const SIG = 0.5        # RHO and SIG are the constants in the Wolfe-Powell conditions
+    const INT = 0.1     # don't reevaluate within 0.1 of the limit of the current bracket
+    const EXT = 3.0                     # extrapolate maximum 3 times the current bracket
+    const MAX = 20                          # max 20 function evaluations per line search
+    const RATIO = 100                                       # maximum allowed slope ratio
 
     # octave could reduce code with using "max(Tuple...)"
     if (max( size(length, 1), size(length, 2) ) == 2)
@@ -77,14 +77,9 @@ function fmincg(f, X, options)
     ls_failed = 0                              # no previous line search has failed
     fX = []
     f1, df1 = eval(f)(X)                          # get function value and gradient
-    f1 = f1[1]
     i = i + (length<0)                                             # count epochs?!
     s = -df1                                         # search direction is steepest
-
-    d1 = (-s'*s)[1]                                             # this is the slope
-
-    #@printf("d1[1] %s = %f \n", typeof(d1[1]), d1[1])
-
+    d1 = reshape(-s'*s, 1)[1]                                   # this is the slope
     z1 = red / (1.0 - d1)                             # initial step is red/(|s|+1)
 
     while i < abs(length)
@@ -93,10 +88,8 @@ function fmincg(f, X, options)
         X0, f0, df0 = X, f1, df1                    # make a copy of current values
         X = X + z1*s                                            # begin line search
         f2, df2 = eval(f)(X)
-        f2  = f2[1]
-        df2 = df2[1]
         i = i + (length<0)                                         # count epochs?!
-        d2 = (df2' * s)[1]
+        d2 = reshape(df2'*s, 1)[1]
         f3, d3, z3 = f1, d1, -z1              # initialize point 3 equal to point 1
         if length > 0
             M = MAX
@@ -120,11 +113,11 @@ function fmincg(f, X, options)
                 end
                 z2 = max(min(z2, INT*z3),(1-INT)*z3)   # don't accept too close to limits
                 z1 = z1 + z2                                            # update the step
-                X = X + z2*s;
+                X = X + z2*s
                 f2, df2 = eval(f)(X)
                 M = M - 1
                 i = i + (length<0)                                       # count epochs?!
-                d2 = df2'*s;
+                d2 = df2'*s
                 z3 = z3-z2                     # z3 is now relative to the location of z2
             end
             if f2 > f1+z1*RHO*d1 || d2 > -SIG*d1
@@ -161,7 +154,7 @@ function fmincg(f, X, options)
             f2, df2 = eval(f)(X)
             M = M - 1
             i = i + (length<0)                                           # count epochs?!
-            d2 = df2'*s
+            d2 = reshape(df2'*s, 1)[1]                       # return matrix as scalar...
         end                                                          # end of line search
 
         if success                                             # if line search succeeded

@@ -27,7 +27,7 @@ function main()
     input_layer_size  = 48^2 # Images 48x48 pixel
     hidden_layer_size = 60   # Hidden layer size, I don't have any intension
     kana_labels       = 10   # 'Kana' has 73 characters, you need to reduce labels up to machine spec
-    sample_size       = 30   # Take 30 samples for each characters
+    sample_size       = 3    # Take 30 samples for each characters
 
     println("========================================\n")
     println("=== 入力層、隠れ層、出力層を設定する     ===\n")
@@ -96,6 +96,8 @@ function main()
     @printf("\n繰り返し回数: %d, 正規化パラメーター: %f\n", it, lambda)
 
     # 目的関数を作る関数を設定
+    # nnCostFunctionは"p"だけが後続の処理で変数を受け取るクロージャー
+    # 入力層とか隠れ層、そして出力層などの設定値はこの時点で確定
     costFunction = p -> nnCostFunction(p,
                                        input_layer_size,
                                        hidden_layer_size,
