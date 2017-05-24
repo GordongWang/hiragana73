@@ -1,4 +1,6 @@
-function fmincg(f, X, options)
+using Debug
+
+@debug function fmincg(f, X, options)
 # Minimize a continuous differentialble multivariate function. Starting point
 # is given by "X" (D by 1), and the function named in the string "f", must
 # return a function value and a vector of partial derivatives. The Polack-
@@ -157,11 +159,22 @@ function fmincg(f, X, options)
             d2 = reshape(df2'*s, 1)[1]                       # return matrix as scalar...
         end                                                          # end of line search
 
+        # to return matrix as scalar...
+        function transpw(X)
+            r = X'*X
+            return reshape(r,1)[1]
+        end
+        function transpw(A,B)
+            r = A'*B
+            return reshape(r,1)[1]
+        end
+
         if success                                             # if line search succeeded
             f1 = f2
             fX = [fX' f1]'
             @printf("%s %4i | Cost: %4.6e\r", S, i, f1)
-            s = (df2'*df2-df1'*df2)/(df1'*df1)*s - df2         # Polack-Ribiere direction
+            s = (transpw(df2)-transpw(df1, df2))/transpw(df1)*s - df2  # Polack-Ribiere direction
+
             tmp = df1
             df1 = df2
             df2 = tmp                                                  # swap derivatives
