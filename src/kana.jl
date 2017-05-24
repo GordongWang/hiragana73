@@ -109,6 +109,8 @@ function main()
     println("=============================================================")
 
     nn_params, cost = fmincg(costFunction, nn_params, options)
+
+    return
 end
 
 main()

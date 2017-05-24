@@ -1,6 +1,4 @@
-using Debug
-
-@debug function fmincg(f, X, options)
+function fmincg(f, X, options)
 # Minimize a continuous differentialble multivariate function. Starting point
 # is given by "X" (D by 1), and the function named in the string "f", must
 # return a function value and a vector of partial derivatives. The Polack-
@@ -179,12 +177,12 @@ using Debug
             df1 = df2
             df2 = tmp                                                  # swap derivatives
 
-            d2 = df1'*s
+            d2 = reshape(df1'*s,1)[1]
             if d2 > 0                                        # new slope must be negative
                 s = -df1                               # otherwise use steepest direction
                 d2 = -s'*s
             end
-            z1 = z1 * min(RATIO, d1/(d2-realmin))             # slope ratio but max RATIO
+            z1 = z1 * min(RATIO, d1/(d2-realmin()))           # slope ratio but max RATIO
             d1 = d2
             ls_failed = 0                                 # this line search did not fail
         else
@@ -204,7 +202,7 @@ using Debug
             ls_failed = 1                                    # this line search failed
         end
 
-        fprintf('\n')
+        @printf("\n")
         return X, fX, i
     end
 end
