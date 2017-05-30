@@ -76,8 +76,7 @@ function fmincg(f, X, options)
     i = 0                                             # zero the run length counter
     ls_failed = 0                              # no previous line search has failed
     fX = []
-    # J, grad
-    f1, df1 = eval(f)(X)                          # get function value and gradient
+    f1, df1 = eval(f)(X)                      # get function value (J) and gradient
 
     i = i + (length<0)                                             # count epochs?!
     s = -df1                                         # search direction is steepest
@@ -99,7 +98,6 @@ function fmincg(f, X, options)
             M = min(MAX, -length-i)
         end
         success, limit = false, -1                              # initialize quanteties
-
         while true
             while ((f2 > f1+z1*RHO*d1) || (d2 > -SIG*d1)) && (M > 0)
                 limit = z1                                          # tighten the bracket
@@ -205,6 +203,7 @@ function fmincg(f, X, options)
         end
 
         @printf("\n")
-        return X, fX, i
     end
+    # FIXME: How to return values ?
+    #return X, fX, i
 end
