@@ -30,8 +30,8 @@ function nnCostFunction(nn_params,
     Theta2 = reshape(nn_params[(1 + (hidden_layer_size * (input_layer_size + 1))):end]
                      ,data_with_labels, (hidden_layer_size + 1))
 
-    #@printf("Theta1 x: %d, y: %d\n", size(Theta1, 1), size(Theta1, 2))
-    #@printf("Theta2 x: %d, y: %d\n", size(Theta2, 1), size(Theta2, 2))
+    #@printf("Theta1 x: %d, y: %d, type %s\n", size(Theta1, 1), size(Theta1, 2), typeof(Theta1))
+    #@printf("Theta2 x: %d, y: %d, type %s\n", size(Theta2, 1), size(Theta2, 2), typeof(Theta2))
 
     m = size(X, 1)
 
@@ -48,9 +48,9 @@ function nnCostFunction(nn_params,
     for t = 1:m
         # 1, 入力層 a1 にデータセットを入れる
         #@printf("Datasets: Rows: %d, Cols: %d \n", size(X[t,:],1), size(X[t,:],2))
-        act1 = [ones(1,1); X[t,:]']
+        act1 = collect([ones(1,1); X[t,:]'])
         z2   = Theta1 * act1
-        act2 = [ones(1,1); sigmoid(z2)]
+        act2 = collect([ones(1,1); sigmoid(z2)])
         z3   = Theta2 * act2
         # see1: http://stackoverflow.com/questions/29159386/how-should-i-convert-a-singleton-array-to-a-scalar
         # Converting a singleton matrix as a scalar
@@ -58,17 +58,19 @@ function nnCostFunction(nn_params,
         # Converting a singleton matrix as a scalar with using collect()
         act3 = collect(sigmoid(z3))
 
-        #@printf("Act1: Rows: %d, Cols: %d \n", size(act1,1), size(act1,2))
-        #@printf("Act2: Rows: %d, Cols: %d \n", size(act2,1), size(act2,2))
-        #@printf("Act3: Rows: %d, Cols: %d \n", size(act3,1), size(act3,2))
+        #@printf("Act1: Rows: %d, Cols: %d, type %s \n", size(act1,1), size(act1,2), typeof(act1))
+        #@printf("Act2: Rows: %d, Cols: %d, type %s \n", size(act2,1), size(act2,2), typeof(act2))
+        #@printf("Act3: Rows: %d, Cols: %d, type %s \n", size(act3,1), size(act3,2), typeof(act3))
+        #@printf("z2: Rows: %d, Cols: %d, type %s \n", size(z2,1), size(z2,2), typeof(z2))
+        #@printf("z3: Rows: %d, Cols: %d, type %s \n", size(z3,1), size(z3,2), typeof(z3))
 
         # 目的関数
         #println(- y_alt[:, Int64(y[t])]')
         #println(log(act3))
         #println(- (1 - y_alt[:, Int64(y[t])])')
         #println(log(1-act3))
+        J += - dot(y_alt[:, Int64(y[t])], log(act3)) - dot((1 - y_alt[:, Int64(y[t])]), log(1-act3))
 
-        J += - y_alt[:, Int64(y[t])]' * log(act3) - (1 - y_alt[:, Int64(y[t])])' * log(1-act3)
         # 2, レイヤー３の出力Kのそれぞれに対して
         # 3, δ2を計算
         delta_3 = act3 - y_alt[:, Int64(y[t])]
@@ -99,11 +101,6 @@ function nnCostFunction(nn_params,
 
     grad = [Theta1_grad[:] ; Theta2_grad[:]]
 
-    #
-    # To return "Array{Float64,1}" as scalar...
-    # https://stackoverflow.com/questions/29159386/how-should-i-convert-a-singleton-array-to-a-scalar
-    #
-    J = reshape(J, 1)[1]
     # multiple values can be returned from a function using tuples
     # if the return keyword is omitted, the last term is returned
     return J, grad

@@ -76,6 +76,7 @@ function fmincg(f, X, options)
     i = 0                                             # zero the run length counter
     ls_failed = 0                              # no previous line search has failed
     fX = []
+    # J, grad
     f1, df1 = eval(f)(X)                          # get function value and gradient
     i = i + (length<0)                                             # count epochs?!
     s = -df1                                         # search direction is steepest
