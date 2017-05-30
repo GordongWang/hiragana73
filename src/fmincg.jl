@@ -78,9 +78,10 @@ function fmincg(f, X, options)
     fX = []
     # J, grad
     f1, df1 = eval(f)(X)                          # get function value and gradient
+
     i = i + (length<0)                                             # count epochs?!
     s = -df1                                         # search direction is steepest
-    d1 = reshape(-s'*s, 1)[1]                                   # this is the slope
+    d1 = dot(-s, s)                                             # this is the slope
     z1 = red / (1.0 - d1)                             # initial step is red/(|s|+1)
 
     while i < abs(length)
@@ -90,7 +91,7 @@ function fmincg(f, X, options)
         X = X + z1*s                                            # begin line search
         f2, df2 = eval(f)(X)
         i = i + (length<0)                                         # count epochs?!
-        d2 = reshape(df2'*s, 1)[1]
+        d2 = dot(df2, s)
         f3, d3, z3 = f1, d1, -z1              # initialize point 3 equal to point 1
         if length > 0
             M = MAX
@@ -118,7 +119,7 @@ function fmincg(f, X, options)
                 f2, df2 = eval(f)(X)
                 M = M - 1
                 i = i + (length<0)                                       # count epochs?!
-                d2 = df2'*s
+                d2 = dot(df2, s)
                 z3 = z3-z2                     # z3 is now relative to the location of z2
             end
             if f2 > f1+z1*RHO*d1 || d2 > -SIG*d1
@@ -155,7 +156,7 @@ function fmincg(f, X, options)
             f2, df2 = eval(f)(X)
             M = M - 1
             i = i + (length<0)                                           # count epochs?!
-            d2 = reshape(df2'*s, 1)[1]                       # return matrix as scalar...
+            d2 = dot(df2, s)                                 # return matrix as scalar...
         end                                                          # end of line search
 
         # to return matrix as scalar...
@@ -178,7 +179,7 @@ function fmincg(f, X, options)
             df1 = df2
             df2 = tmp                                                  # swap derivatives
 
-            d2 = reshape(df1'*s,1)[1]
+            d2 = dot(df1, s)
             if d2 > 0                                        # new slope must be negative
                 s = -df1                               # otherwise use steepest direction
                 d2 = -s'*s
