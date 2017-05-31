@@ -74,7 +74,7 @@ function fmincg(f, X, options)
     S="Iteration "                           # only to display progress
 
     i = 0                                             # zero the run length counter
-    ls_failed = 0                              # no previous line search has failed
+    ls_failed = false                          # no previous line search has failed
     fX = []
     f1, df1 = eval(f)(X)                      # get function value (J) and gradient
 
@@ -184,7 +184,7 @@ function fmincg(f, X, options)
             end
             z1 = z1 * min(RATIO, d1/(d2-realmin()))           # slope ratio but max RATIO
             d1 = d2
-            ls_failed = 0                                 # this line search did not fail
+            ls_failed = false                             # this line search did not fail
         else
             X = X0
             f1 = f0
@@ -199,7 +199,7 @@ function fmincg(f, X, options)
             s = -df1                                                    # try steepest
             d1 = -s'*s
             z1 = 1/(1-d1)
-            ls_failed = 1                                    # this line search failed
+            ls_failed = true                                  # this line search failed
         end
 
         @printf("\n")
