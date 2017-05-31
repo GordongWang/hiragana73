@@ -24,11 +24,14 @@ function main()
 
     println("This is test program")
 
-    # specify parameters
-    input_layer_size  = 48^2 # Images 48x48 pixel
-    hidden_layer_size = 60   # Hidden layer size, I don't have any intension
-    kana_labels       = 20   # 'Kana' has 73 characters, you need to reduce labels up to machine spec
-    sample_size       = 30   # Take 30 samples for each characters
+    #
+    # Specify parameters, training set
+    #
+    input_layer_size  = 48^2             # Images 48x48 pixel
+    hidden_layer_size = 60               # Hidden layer size, I don't have any intension
+    kana_labels       = 15               # 'Kana' has 73 characters, you need to reduce labels up to machine spec
+    sample_size       = 30               # Take 30 samples for each characters
+    test_set_size     = 10               # Take 1/3 samples for test set
 
     println("========================================\n")
     println("=== 入力層、隠れ層、出力層を設定する     ===\n")
@@ -49,10 +52,6 @@ function main()
             index = sample_size * (i-1) + j
             v     = load(pngs[j])
             v     = convert(Image{Gray}, v)
-
-            #@printf( "typeof(X[index,:]) = %s , typeof(v) = %s \n", typeof(X[index,:]), typeof(v))
-            #@printf( "typeof(y[index]) = %s , typeof(v) = %s \n", typeof(y[index]), typeof(i))
-
             # To deal with RGB using images, convert it to Gray scaled image
             # Create dataset as transposed X
             X[index,:] = v[:]
@@ -121,14 +120,44 @@ function main()
     # 実際の画像を与えてみる
     pred = predict(Theta1, Theta2, X)
 
-    @printf("\n*** pred vs answer ***\n");
-    for i = 1:size(pred, 1)
-        @printf("予測 %d, 正解 %d\n", pred[i], y[i])
-    end
+    #@printf("\n*** pred vs answer ***\n");
+    #for i = 1:size(pred, 1)
+    #    @printf("予測 %d, 正解 %d\n", pred[i], y[i])
+    #end
 
-    # 正答率を出す
+    # トレーニングセットの正答率を出す
     # 10種類仮名を与えて正答率10%の場合ほぼまったく合っていないことになる
-    @printf("\n正解率: %f ％\n", mean( countnz((pred .== y) .== true) / length(pred .== y) ) * 100)
+    @printf("\nトレーニングセットの正解率: %f ％\n", mean( countnz((pred .== y) .== true) / length(pred .== y) ) * 100)
+    # テストセットのデータセットを用意する。これは訓練に使ったデータではないので
+    # 機械学習がこれを正答できた場合、新たな類似画像でも対応できることを意味する
+    Xv = zeros(kana_labels * test_set_size, input_layer_size)
+    yv = zeros(kana_labels * test_set_size, 1)
+
+    println(kana_labels * test_set_size)
+
+    kanas = glob("./hiragana73/*/")
+    index = 0
+
+    for i = 1:kana_labels
+        @printf("\nPick up from %s %d files.\n ", kanas[i], test_set_size)
+        pngs = glob("*.png", kanas[i])
+
+        for j = sample_size:(sample_size+test_set_size-1)
+            index = index + 1
+            v = load(pngs[j])
+            v = convert(Image{Gray}, v)
+            # To deal with RGB using images, convert it to Gray scaled image
+            # Create dataset as transposed X
+            Xv[index,:] = v[:]
+            yv[index]   = i
+            @printf(".")
+        end
+    end
+    # 画像を与えてみる
+    pred = predict(Theta1, Theta2, Xv)
+
+    # テストセットの正答率を出す
+    @printf("\nテストセットの正解率: %f ％\n", mean( countnz((pred .== yv) .== true) / length(pred .== yv) ) * 100)
 end
 
 main()
