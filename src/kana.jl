@@ -29,12 +29,12 @@ function main()
     #
     input_layer_size  = 48^2             # Images 48x48 pixel
     hidden_layer_size = 60               # Hidden layer size, I don't have any intension
-    kana_labels       = 15               # 'Kana' has 73 characters, you need to reduce labels up to machine spec
-    sample_size       = 30               # Take 30 samples for each characters
-    test_set_size     = 10               # Take 1/3 samples for test set
+    kana_labels       = 25               # 'Kana' has 73 characters, you need to reduce labels up to machine spec
+    sample_size       = 50               # Take 50 samples for each characters
+    test_set_size     = 15               # Take 1/3 samples for test set
 
     println("========================================\n")
-    println("=== 入力層、隠れ層、出力層を設定する     ===\n")
+    println("=== 入力層、隠れ層、出力層を設定する ===\n")
     println("========================================\n")
     @printf("Input  Layer size %d \n", input_layer_size)
     @printf("Hidden Layer size %d \n", hidden_layer_size)
@@ -133,8 +133,6 @@ function main()
     Xv = zeros(kana_labels * test_set_size, input_layer_size)
     yv = zeros(kana_labels * test_set_size, 1)
 
-    println(kana_labels * test_set_size)
-
     kanas = glob("./hiragana73/*/")
     index = 0
 
@@ -155,6 +153,11 @@ function main()
     end
     # 画像を与えてみる
     pred = predict(Theta1, Theta2, Xv)
+
+    @printf("\n*** pred vs answer ***\n");
+    for i = 1:size(pred, 1)
+        @printf("予測 %d, 正解 %d\n", pred[i], yv[i])
+    end
 
     # テストセットの正答率を出す
     @printf("\nテストセットの正解率: %f ％\n", mean( countnz((pred .== yv) .== true) / length(pred .== yv) ) * 100)
