@@ -130,7 +130,14 @@ function fmincg(f, X, options)
             end
             A = 6*(f2-f3)/z3+3*(d2+d3)                         # make cubic extrapolation
             B = 3*(f3-f2)-z3*(d3+2*d2)
-            z2 = -d2*z3*z3/(B+sqrt(B*B-A*d2*z3*z3))           # num. error possible - ok!
+
+            z2 = try
+                # perhaps, result will be DomainError
+                -d2*z3*z3/(B+sqrt(B*B-A*d2*z3*z3))          # num. error possible - ok!
+            catch
+                NaN
+            end
+
             if ~isreal(z2) || isnan(z2) || isinf(z2) || z2 < 0  # num prob or wrong sign?
                 if limit < -0.5                               # if we have no upper limit
                     z2 = z1 * (EXT-1)                # the extrapolate the maximum amount
