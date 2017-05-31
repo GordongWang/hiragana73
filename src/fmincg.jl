@@ -177,17 +177,14 @@ function fmincg(f, X, options)
         if success                                             # if line search succeeded
             f1 = f2
             fX = [fX' f1]'
-            @printf("%s %4i | Cost: %4.6e\r", S, i, f1)
+            @printf("%s %4i | Cost: %4.6e\r\n", S, i, f1)
             s = (transpw(df2)-transpw(df1, df2))/transpw(df1)*s - df2  # Polack-Ribiere direction
-
-            tmp = df1
-            df1 = df2
-            df2 = tmp                                                  # swap derivatives
+            df1, df2 = df2, df1                                        # swap derivatives
 
             d2 = dot(df1, s)
             if d2 > 0                                        # new slope must be negative
                 s = -df1                               # otherwise use steepest direction
-                d2 = -s'*s
+                d2 = -dot(s,s)
             end
             z1 = z1 * min(RATIO, d1/(d2-realmin()))           # slope ratio but max RATIO
             d1 = d2
@@ -197,20 +194,14 @@ function fmincg(f, X, options)
             f1 = f0
             df1 = df0  # restore point from before failed line search
             if ls_failed || i > abs(length)          # line search failed twice in a row
-                break                              # or we ran out of time, so we give up
+                break                             # or we ran out of time, so we give up
             end
-            tmp = df1
-            df1 = df2
-            df2 = tmp                         # swap derivatives
-
-            s = -df1                                                    # try steepest
-            d1 = -s'*s
+            df1, df2 = df2, df1                                       # swap derivatives
+            s = -df1                                                      # try steepest
+            d1 = -dot(s,s)
             z1 = 1/(1-d1)
-            ls_failed = true                                  # this line search failed
+            ls_failed = true                                   # this line search failed
         end
-
-        @printf("\n")
     end
-    # FIXME: How to return values ?
-    #return X, fX, i
+    return X, fX, i
 end

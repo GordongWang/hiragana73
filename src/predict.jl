@@ -7,11 +7,15 @@ function predict(Theta1, Theta2, X)
     m = size(X, 1)
     num_labels = size(Theta2, 1)
 
-    p = zeros(size(X, 1), 1)
-
     h1 = sigmoid([ones(m, 1) X] * Theta1')
     h2 = sigmoid([ones(m, 1) h1] * Theta2')
-    [dummy, p] = max(h2, [], 2)
 
-    return p
+    max, aindx = findmax(h2, 2)
+    msize=size(h2)
+    col = zeros(msize[1], 1)
+    for i=1:msize[1]
+        _, col[i] = ind2sub(msize,aindx[i])
+    end
+
+    return col
 end

@@ -18,6 +18,7 @@ include("sigmoidGradient.jl");
 include("randInitializeWeights.jl")
 include("nnCostFunction.jl")
 include("fmincg.jl")
+include("predict.jl")
 
 function main()
 
@@ -26,8 +27,8 @@ function main()
     # specify parameters
     input_layer_size  = 48^2 # Images 48x48 pixel
     hidden_layer_size = 60   # Hidden layer size, I don't have any intension
-    kana_labels       = 10   # 'Kana' has 73 characters, you need to reduce labels up to machine spec
-    sample_size       = 3    # Take 30 samples for each characters
+    kana_labels       = 20   # 'Kana' has 73 characters, you need to reduce labels up to machine spec
+    sample_size       = 30   # Take 30 samples for each characters
 
     println("========================================\n")
     println("=== 入力層、隠れ層、出力層を設定する     ===\n")
@@ -86,7 +87,7 @@ function main()
     println("============================================")
 
     # Gradientを求める(OptimsetはただのHashMapに変更)
-    it = 200
+    it = 50
     options = Dict([("MaxIter", it)])
 
     # 正規化パラメーター
@@ -110,7 +111,24 @@ function main()
 
     nn_params, cost = fmincg(costFunction, nn_params, options)
 
-    return
+    # ニューラルネットワークの重みを取り出す
+    Theta1 = reshape(nn_params[1:hidden_layer_size * (input_layer_size + 1)],
+                     hidden_layer_size, (input_layer_size + 1));
+
+    Theta2 = reshape(nn_params[(1 + (hidden_layer_size * (input_layer_size + 1))):end],
+                     kana_labels, (hidden_layer_size + 1));
+
+    # 実際の画像を与えてみる
+    pred = predict(Theta1, Theta2, X)
+
+    @printf("\n*** pred vs answer ***\n");
+    for i = 1:size(pred, 1)
+        @printf("予測 %d, 正解 %d\n", pred[i], y[i])
+    end
+
+    # 正答率を出す
+    # 10種類仮名を与えて正答率10%の場合ほぼまったく合っていないことになる
+    @printf("\n正解率: %f ％\n", mean( countnz((pred .== y) .== true) / length(pred .== y) ) * 100)
 end
 
 main()
